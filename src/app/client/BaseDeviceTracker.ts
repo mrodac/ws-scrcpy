@@ -59,11 +59,10 @@ export abstract class BaseDeviceTracker<DD extends BaseDeviceDescriptor, TE> ext
             hostname = location.hostname;
             port = location.port;
         }
-        const hash = `#!${querystring.encode(q)}`;
+        const hash = `?#!${querystring.encode(q)}`;
         const a = document.createElement('a');
         a.setAttribute('href', `${protocol}//${hostname}:${port}/${hash}`);
         a.setAttribute('rel', 'noopener noreferrer');
-        a.setAttribute('target', '_blank');
         a.classList.add(`link-${q.action}`);
         a.innerText = text;
         return a;
