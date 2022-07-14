@@ -108,8 +108,10 @@ export abstract class BaseDeviceTracker<DD extends BaseDeviceDescriptor, TE> ext
         data.forEach((item) => {
             this.buildDeviceRow(block, item);
         });
+        
+        this.buildDeviceTableFooter(block);
     }
-
+    
     private setNameValue(parent: Element | null, name: string): void {
         if (!parent) {
             return;
@@ -142,6 +144,8 @@ export abstract class BaseDeviceTracker<DD extends BaseDeviceDescriptor, TE> ext
     }
 
     protected abstract buildDeviceRow(tbody: Element, device: DD): void;
+    
+    protected abstract buildDeviceTableFooter(parent: Element): void;
 
     protected onSocketClose(e: CloseEvent): void {
         if (this.destroyed) {

@@ -126,12 +126,14 @@ export class DeviceTracker extends BaseDeviceTracker<GoogDeviceDescriptor, never
         const pidString = button.getAttribute(Attribute.PID) || '';
         const command = button.getAttribute(Attribute.COMMAND) as string;
         const pid = parseInt(pidString, 10);
+        const address = button.getAttribute(Attribute.ADDRESS);
         const data: Message = {
             id: this.getNextId(),
             type: command,
             data: {
                 udid: typeof udid === 'string' ? udid : undefined,
                 pid: isNaN(pid) ? undefined : pid,
+                address
             },
         };
 
@@ -342,6 +344,47 @@ export class DeviceTracker extends BaseDeviceTracker<GoogDeviceDescriptor, never
                 store: false,
             });
         }
+    }
+    
+    protected buildDeviceTableFooter(parent: Element): void {
+        
+        const block = document.createElement('div');
+        block.classList.add('device');
+        parent.appendChild(block);
+        
+        const labeldiv = document.createElement('div');
+        labeldiv.classList.add('desc-block');
+        block.appendChild(labeldiv);
+
+        const label = document.createElement('label');
+        label.classList.add('label');
+        label.innerText = 'Connect to';
+        label.id = `label_address`;
+        labeldiv.appendChild(label);
+        
+        const inputdiv = document.createElement('div');
+        inputdiv.classList.add('desc-block');
+        block.appendChild(inputdiv);
+        
+        const connectButton = document.createElement('button');
+        connectButton.setAttribute(Attribute.COMMAND, ControlCenterCommand.ADB_CONNECT);
+        
+        const input = document.createElement('input');
+        input.classList.add('input');
+        input.id = 'input_address';
+        input.placeholder = 'Device Address';
+        input.addEventListener('input', ():void => connectButton.setAttribute(Attribute.ADDRESS, `${input.value}`));
+        inputdiv.appendChild(input);
+        
+        const buttondiv = document.createElement('div');
+        buttondiv.classList.add('desc-block', 'stream');
+        block.appendChild(buttondiv);
+
+        connectButton.classList.add('action-button');
+        connectButton.innerText = 'Connect';
+        connectButton.onclick = this.onActionButtonClick;
+
+        buttondiv.appendChild(connectButton);
     }
 
     protected getChannelCode(): string {

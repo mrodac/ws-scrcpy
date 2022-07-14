@@ -7,11 +7,13 @@ export class ControlCenterCommand {
     public static CONFIGURE_STREAM = 'configure_stream';
     public static RUN_WDA = 'run-wda';
     public static REQUEST_WDA = 'request-wda';
+    public static ADB_CONNECT = 'adb-connect';
 
     private id = -1;
     private type = '';
     private pid = 0;
     private udid = '';
+    private address = '';
     private method = '';
     private args?: any;
     private data?: any;
@@ -48,6 +50,9 @@ export class ControlCenterCommand {
             case this.CONFIGURE_STREAM:
             case this.RUN_WDA:
                 return command;
+            case this.ADB_CONNECT:
+				command.address = data.address;
+                return command;
             default:
                 throw new Error(`Unknown command "${body.command}"`);
         }
@@ -73,5 +78,8 @@ export class ControlCenterCommand {
     }
     public getArgs(): any {
         return this.args;
+    }
+	public getAddress(): string {
+        return this.address;
     }
 }

@@ -158,20 +158,23 @@ export class ControlCenter extends BaseControlCenter<GoogDeviceDescriptor> imple
     public async runCommand(command: ControlCenterCommand): Promise<void> {
         const udid = command.getUdid();
         const device = this.getDevice(udid);
-        if (!device) {
+        if (udid && !device) {
             console.error(`Device with udid:"${udid}" not found`);
             return;
         }
         const type = command.getType();
         switch (type) {
             case ControlCenterCommand.KILL_SERVER:
-                await device.killServer(command.getPid());
+                await device?.killServer(command.getPid());
                 return;
             case ControlCenterCommand.START_SERVER:
-                await device.startServer();
+                await device?.startServer();
                 return;
             case ControlCenterCommand.UPDATE_INTERFACES:
-                await device.updateInterfaces();
+                await device?.updateInterfaces();
+                return;
+            case ControlCenterCommand.ADB_CONNECT:
+				Device.adbConnect(command.getAddress());
                 return;
             default:
                 throw new Error(`Unsupported command: "${type}"`);

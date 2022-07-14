@@ -21,6 +21,8 @@ export interface DeviceEvents {
     update: Device;
 }
 
+const TAG = '[Device]';
+
 export class Device extends TypedEmitter<DeviceEvents> {
     private static readonly INITIAL_UPDATE_TIMEOUT = 1500;
     private static readonly MAX_UPDATES_COUNT = 7;
@@ -130,6 +132,31 @@ export class Device extends TypedEmitter<DeviceEvents> {
             .shell(this.udid, command)
             .then(AdbExtended.util.readAll)
             .then((output: Buffer) => output.toString().trim());
+    }
+
+    public static adbConnect(address: string): void {
+        let output = '';
+        const cmd = 'adb';
+        const args = ['connect', address];
+        
+        const adb = spawn(cmd, args, { stdio: ['ignore', 'pipe', 'pipe'] });
+        
+        adb.stdout.on('data', (data) => {
+            output += data.toString();
+        });
+
+        adb.stderr.on('data', (data) => {
+            console.error(TAG, `stderr: ${data}`);
+        });
+
+        adb.on('error', (e: Error) => {
+            console.error(TAG, `failed to spawn adb process.\n${e.stack}`);
+        });
+
+        adb.on('close', (code) => {
+            console.log(TAG, `adb process (${args.join(' ')}) exited with code ${code}`);
+            console.log(output);
+        });
     }
 
     public async push(contents: string, path: string): Promise<PushTransfer> {

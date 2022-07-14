@@ -73,6 +73,10 @@ export class DeviceTracker extends BaseDeviceTracker<ApplDeviceDescriptor, never
         });
         tbody.appendChild(row);
     }
+    
+    protected buildDeviceTableFooter(_parent: Element): void {
+    }
+
 
     protected getChannelCode(): string {
         return ChannelCode.ATRC;
